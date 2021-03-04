@@ -1,25 +1,24 @@
-var express = require('express');
-var router = express.Router();
+let express = require('express');
+let router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-  var db = req.con;
-  var data = "";
+  let db = req.con;
+  let data = "";
 
-  var user = "";
-  var user = req.query.user;
+  let user = req.query.user;
 
-  var filter = "";
+  let filter = "";
   if (user) {
       filter = 'WHERE userid = ?';
   }
 
-  db.query('SELECT * FROM account ' + filter, user, function(err, rows) {
+  db.query('SELECT * FROM account ' + filter, user, (err, rows)=> {
       if (err) {
           console.log(err);
       }
-      var data = rows;
+      let data = rows;
 
       // use index.ejs
       res.render('index', { title: 'Account Information', data: data, user: user });
@@ -27,22 +26,22 @@ router.get('/', function(req, res, next) {
 
 });
 
-router.get('/add', function(req,res,next){
+router.get('/add', (req,res,next)=>{
   res.render('userAdd', {title:'Add User'});
 });
 
-router.post('/userAdd', function(req, res, next) {
+router.post('/userAdd', (req, res, next)=> {
 
-  var db = req.con;
+  let db = req.con;
 
-  var sql = {
+  let sql = {
       userid: req.body.userid,
       password: req.body.password,
       email: req.body.email
   };
 
   //console.log(sql);
-  var qur = db.query('INSERT INTO account SET ?', sql, function(err, rows) {
+  let qur = db.query('INSERT INTO account SET ?', sql, (err, rows)=> {
       if (err) {
           console.log(err);
       }
@@ -53,32 +52,32 @@ router.post('/userAdd', function(req, res, next) {
 });
 
 
-router.get('/userEdit', function(req,res,next){
-  var id = req.query.id;
-  var db = req.con;
-  var data = "";
+router.get('/userEdit', (req,res,next)=>{
+  let id = req.query.id;
+  let db = req.con;
+  let data = "";
 
-  db.query('SELECT * FROM account WHERE id = ?',id,function(err,rows){
+  db.query('SELECT * FROM account WHERE id = ?',id,(err,rows)=>{
     if (err){
       console.log(err);
     }
-    var data = rows;
+    let data = rows;
     res.render('userEdit', { title : 'Edit Account', data:data});
   });
 });
 
-router.post('/userEdit', function(req, res, next) {
+router.post('/userEdit', (req, res, next)=> {
 
-  var db = req.con;
-  var id = req.body.id;
+  let db = req.con;
+  let id = req.body.id;
 
-  var sql = {
+  let sql = {
       userid: req.body.userid,
       password: req.body.password,
       email: req.body.email
   };
 
-  var qur = db.query('UPDATE account SET ? WHERE id = ?', [sql, id], function(err, rows) {
+  let qur = db.query('UPDATE account SET ? WHERE id = ?', [sql, id], (err, rows)=> {
       if (err) {
           console.log(err);
       }
@@ -89,11 +88,11 @@ router.post('/userEdit', function(req, res, next) {
 
 });
 
-router.get('/userDelete', function(req,res,next){
-  var id = req.query.id;
-  var db = req.con;
+router.get('/userDelete', (req,res,next)=>{
+  let id = req.query.id;
+  let db = req.con;
 
-  var qur = db.query('DELETE FROM account WHERE id = ?', id,function(err,rwos){
+  let qur = db.query('DELETE FROM account WHERE id = ?', id,(err,rwos)=>{
     if(err){
       console.log(err);
     }
