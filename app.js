@@ -1,24 +1,31 @@
-let createError = require('http-errors');
-let express = require('express');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-let indexRouter = require('./routes/index');
-let usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
-let mysql = require("mysql");
+const mysql = require("mysql");
 
-let con = mysql.createConnection({
-  host:"localhost",
-  user:"root",
-  password:"123456",
-  database:"test"
+require('dotenv').config();
+
+const host = process.env.DB_HOST;
+const user = process.env.DB_USER;
+const password = process.env.DB_PASS;
+const database = process.env.DB_DATA;
+
+const con = mysql.createConnection({
+  host,
+  user,
+  password,
+  database,
 });
 
 con.connect((err)=>{
   if(err){
-    console.log('connecting error');
+    console.log('connecting error',err);
     return;
   }
   console.log('connecting success');
@@ -59,5 +66,7 @@ app.use((err, req, res, next)=> {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
 
 module.exports = app;
