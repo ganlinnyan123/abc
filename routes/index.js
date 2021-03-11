@@ -4,9 +4,9 @@ const router = express.Router();
 /* GET home page. */
 router.get('/', (req, res, next)=> {
   
-  const db = req.con;
-  let data = "";
-  let {user} = req,query;
+  const { con } = req;
+
+  const { user } = req.query;
   //let user = req.query.user;
 
   let filter;
@@ -14,12 +14,10 @@ router.get('/', (req, res, next)=> {
       filter = 'WHERE userid = ?';
   }
 
-  db.query(`SELECT * FROM account ${filter}${user}`, (err, rows)=> {
+  con.query(`SELECT * FROM account ${filter}`,user, (err, data)=> {
       if (err) {
           console.log(err);
       }
-      let data = rows;
-
       // use index.ejs
       res.render('index', { title: 'Account Information', data, user });
   });
@@ -32,10 +30,8 @@ router.get('/add', (req,res,next)=>{
 
 router.post('/userAdd', (req, res, next)=> {
 
-  let db = req.con;
-  const userid = req.body.userid;
-  const password = req.body.password;
-  const email = req.body.email;
+  let {con} = req;
+  const {userid,password,email} = req.body;
   let sql = {
       userid,
       password,
@@ -43,7 +39,7 @@ router.post('/userAdd', (req, res, next)=> {
   };
 
   //console.log(sql);
-  let qur = db.query('INSERT INTO account SET ?', sql, (err, rows)=> {
+  let qur = con.query('INSERT INTO account SET ?', sql, (err)=> {
       if (err) {
           console.log(err);
       }
@@ -57,33 +53,30 @@ router.post('/userAdd', (req, res, next)=> {
 router.get('/userEdit', (req,res,next)=>{
   let {id} = req.query;
   //let id = req.query.id;
-  let db = req.con;
-  let data = "";
+  let {con} = req;
 
-  db.query('SELECT * FROM account WHERE id = ?',id,(err,rows)=>{
+
+  con.query('SELECT * FROM account WHERE id = ?',id,(err,data)=>{
     if (err){
       console.log(err);
     }
-    let data = rows;
     res.render('userEdit', { title : 'Edit Account', data:data});
   });
 });
 
 router.post('/userEdit', (req, res, next)=> {
 
-  let db = req.con;
+  let {con} = req;
   let {id} = req.body;
   //let id = req.body.id;
-  const userid = req.body.userid;
-  const password = req.body.password;
-  const email = req.body.email;
+  const {userid,password,email} = req.body;
   let sql = {
       userid,
       password,
       email,
   };
 
-  let qur = db.query('UPDATE account SET ? WHERE id = ?', [sql, id], (err, rows)=> {
+  let qur = con.query('UPDATE account SET ? WHERE id = ?', [sql, id], (err)=> {
       if (err) {
           console.log(err);
       }
@@ -97,9 +90,9 @@ router.post('/userEdit', (req, res, next)=> {
 router.get('/userDelete', (req,res,next)=>{
   let {id} = req.query;
   //let id = req.query.id;
-  let db = req.con;
+  let {con} = req;
 
-  let qur = db.query('DELETE FROM account WHERE id = ?', id,(err,rwos)=>{
+  let qur = con.query('DELETE FROM account WHERE id = ?', id,(err)=>{
     if(err){
       console.log(err);
     }
